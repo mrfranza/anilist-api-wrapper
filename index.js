@@ -5,135 +5,67 @@ const helmet = require("helmet");
 
 const API_URL = 'https://graphql.anilist.co';
 
-async function getAnimeOrMangaInfo(idOrLink) {
-    const regex = /https:\/\/anilist.co\/(?:anime|manga)\/(\d+)/;
-    const id = idOrLink.match(regex)[1];
-    const query = `
-    query ($id: Int) {
-        Media (id: $id) {
+async function getAnimeOrMangaInfo(id) {
+  const query = `
+  query ($id: Int) {
+    Media (id: $id) {
+      id
+      title {
+        romaji
+        english
+        native
+      }
+      type
+      format
+      status
+      description
+      startDate {
+        year
+        month
+        day
+      }
+      endDate {
+        year
+        month
+        day
+      }
+      episodes
+      duration
+      bannerImage
+      coverImage {
+        extraLarge
+        large
+        medium
+        color
+      }
+      relations {
+        edges {
           id
-          title {
-            romaji
-            english
-            native
-          }
-          type
-          format
-          status
-          description
-          startDate {
-            year
-            month
-            day
-          }
-          endDate {
-            year
-            month
-            day
-          }
-          season
-          seasonYear
-          episodes
-          duration
-          chapters
-          volumes
-          genres
-          synonyms
-          averageScore
-          meanScore
-          popularity 
-          favourites
-          isAdult
-          bannerImage
-          coverImage {
-            extraLarge
-            large
-            medium
-            color
-          }
-          trailer {
+          relationType
+          node {
             id
-            site
-            thumbnail
-          }
-          externalLinks {
-            url
-            site
-          }
-          rankings {
-            id
-            rank
             type
             format
-            year
-            season
-            allTime
-            context
-          }
-          tags {
-            id
-            name
-            description
-            rank
-            isMediaSpoiler
-            category
-          }
-          relations {
-            edges {
-              id
-              relationType
-              node {
-                id
-                type
-                format
-                status
-                title {
-                  romaji
-                  english
-                  native
-                }
-              }
-            }
-          }
-          staff {
-            edges {
-              role
-              node {
-                id
-                name {
-                  full
-                  native
-                }
-              }
-            }
-          }
-          characters {
-            edges {
-              role
-              node {
-                id
-                name {
-                  full
-                  native
-                }
-                image {
-                  large
-                  medium
-                }
-              }
+            status
+            title {
+              romaji
+              english
+              native
             }
           }
         }
       }
-    `;
-    const variables = {
-        id: parseInt(id),
-    };
-    const response = await axios.post('https://graphql.anilist.co', {
-        query,
-        variables,
-    });
-    return response.data.data.Media;
+    }
+  }
+  `;
+  const variables = {
+    id: parseInt(id),
+  };
+  const response = await axios.post('https://graphql.anilist.co', {
+    query,
+    variables,
+  });
+  return response.data.data.Media;
 }
 
 
@@ -144,47 +76,60 @@ app.use(helmet());
 app.use(cors());
 
 app.use(express.urlencoded({
-    extended: true
+  extended: true
 }));
 
 app.use(express.json({
-    extended: true
+  extended: true
 }));
 
 
 app.get("/", (_, res) => {
-    return res.json({
-        message: "API's working well!"
-    });
+  return res.json({
+    message: "API's working well!"
+  });
 });
 
+app.get('/search/:id', async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const animeOrManga = await getAnimeOrMangaInfo(id);
+    return res.json(animeOrManga);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
 
 app.post("/element", async (req, res) => {
-    const {
-        query
-    } = req.body;
+  const { query } = req.body;
+  try {
     const animeOrManga = await getAnimeOrMangaInfo(query);
-    return res.json({
-        animeOrManga
-    });
+    return res.json(
+      animeOrManga
+    ); // Return the element as JSON to the web page
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "An error occurred while processing your request: " + error });
+  }
 });
 
 app.use((_, __, next) => {
-    return next({
-        error: "Route not found.",
-        code: "route-not-found",
-        status: 404,
-    }); // Not found error
+  return next({
+    error: "Route not found.",
+    code: "route-not-found",
+    status: 404,
+  }); // Not found error
 });
 
 app.listen(5000, () =>
-    console.log(`Server is running on: http://localhost:5000/`)
+  console.log(`Server is running on: http://localhost:5000/`)
 );
 
 process
-    .on('unhandledRejection', (reason, _) => {
-        console.error(reason);
-    })
-    .on('uncaughtException', err => {
-        console.error(`${err}`);
-    });
+  .on('unhandledRejection', (reason, _) => {
+    console.error("unhandledRejection: " + reason);
+  })
+  .on('uncaughtException', err => {
+    console.error("uncaughtException" + `${err}`);
+  });

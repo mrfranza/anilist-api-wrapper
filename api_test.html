@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Test API</title>
+</head>
+
+<body>
+    <h1>Test API</h1>
+    <h2>Avvia il servizio e poi prova inserendo un id</h2>
+    <label>
+        ID or link:
+        <input type="text" id="query" required>
+    </label>
+    <button id="bottone">Submit</button>
+
+    <pre id="output"></pre>
+    
+    <script>
+        const button = document.getElementById('bottone');
+        const input = document.getElementById('query');
+        const resultContainer = document.getElementById('output');
+
+        button.addEventListener('click', async () => {
+            try {
+                const response = await fetch('http://localhost:5000/element', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        query: input.value
+                    })
+                });
+
+                const result = await response.json();
+                console.log(result); // Log the element to console
+                resultContainer.textContent = JSON.stringify(result, null, 2); // Display the element on the web page
+            } catch (error) {
+                console.error(error);
+            }
+        });
+    </script>
+</body>
+
+</html>
