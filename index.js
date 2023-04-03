@@ -38,7 +38,7 @@ async function getAnimeOrMangaInfo(idOrLink) {
           synonyms
           averageScore
           meanScore
-          popularity
+          popularity 
           favourites
           isAdult
           bannerImage
