@@ -9,16 +9,13 @@ async function getAnimeOrMangaInfo(id) {
   const query = `
   query ($id: Int) {
     Media (id: $id) {
-      id
       title {
         romaji
         english
         native
       }
-      type
-      format
-      status
-      description
+      episodes
+      duration
       startDate {
         year
         month
@@ -29,32 +26,23 @@ async function getAnimeOrMangaInfo(id) {
         month
         day
       }
-      episodes
-      duration
-      bannerImage
-      coverImage {
-        extraLarge
-        large
-        medium
-        color
-      }
+      description
+      type
       relations {
         edges {
-          id
-          relationType
           node {
             id
-            type
-            format
-            status
             title {
               romaji
-              english
-              native
             }
           }
         }
       }
+      coverImage {
+        extraLarge
+        large
+      }
+      bannerImage
     }
   }
   `;
@@ -67,7 +55,6 @@ async function getAnimeOrMangaInfo(id) {
   });
   return response.data.data.Media;
 }
-
 
 const app = express();
 
@@ -103,15 +90,10 @@ app.get('/search/:id', async (req, res, next) => {
 
 app.post("/element", async (req, res) => {
   const { query } = req.body;
-  try {
-    const animeOrManga = await getAnimeOrMangaInfo(query);
-    return res.json(
-      animeOrManga
-    ); // Return the element as JSON to the web page
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "An error occurred while processing your request: " + error });
-  }
+  const animeOrManga = await getAnimeOrMangaInfo(query);
+  return res.json(
+    animeOrManga
+  );
 });
 
 app.use((_, __, next) => {
