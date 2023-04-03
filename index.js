@@ -1,4 +1,7 @@
 const axios = require('axios');
+const express = require('express');
+const cors = require("cors");
+const helmet = require("helmet");
 
 const API_URL = 'https://graphql.anilist.co';
 
@@ -133,10 +136,55 @@ async function getAnimeOrMangaInfo(idOrLink) {
     return response.data.data.Media;
 }
 
-async function test() {
-    const idOrLink = 'https://anilist.co/anime/21/';
-    const animeOrMangaInfo = await getAnimeOrMangaInfo(idOrLink);
-    console.log(animeOrMangaInfo);
-}
 
-test();
+const app = express();
+
+//middlewares
+app.use(helmet());
+app.use(cors());
+
+app.use(express.urlencoded({
+    extended: true
+}));
+
+app.use(express.json({
+    extended: true
+}));
+
+
+app.get("/", (_, res) => {
+    return res.json({
+        message: "API's working well!"
+    });
+});
+
+
+app.post("/element", async (req, res) => {
+    const {
+        query
+    } = req.body;
+    const animeOrManga = await getAnimeOrMangaInfo(query);
+    return res.json({
+        animeOrManga
+    });
+});
+
+app.use((_, __, next) => {
+    return next({
+        error: "Route not found.",
+        code: "route-not-found",
+        status: 404,
+    }); // Not found error
+});
+
+app.listen(5000, () =>
+    console.log(`Server is running on: http://localhost:5000/`)
+);
+
+process
+    .on('unhandledRejection', (reason, _) => {
+        console.error(reason);
+    })
+    .on('uncaughtException', err => {
+        console.error(`${err}`);
+    });
