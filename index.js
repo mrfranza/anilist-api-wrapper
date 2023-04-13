@@ -67,6 +67,19 @@ async function getAnimeOrMangaInfo(id) {
   data.storyline = data.description
   delete data.description
 
+  data.startDate = data.startDate.year + "-" + data.startDate.month + "-" + data.startDate.day;
+  data.endDate = data.endDate.year + "-" + data.endDate.month + "-" + data.endDate.day;
+
+  data.epidoseNumber = data.episodes;
+  delete data.episodes;
+  data.episodeDuration = data.duration;
+  delete data.duration;
+
+  data.horizontalImages = data.bannerImage
+  delete data.bannerImage
+  data.verticalImages = data.coverImage.extraLarge
+    delete data.coverImage
+
   switch (data.status) {
     case "FINISHED":
       data.statusId = 1
@@ -155,6 +168,8 @@ async function getAnimeOrMangaInfo(id) {
             data.typeId = 0
             break;
     }
+
+    delete data.type
 
     delete data['format']
 
