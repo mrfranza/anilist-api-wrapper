@@ -81,43 +81,43 @@ async function getAnimeOrMangaInfo(id) {
 
   switch (data.source) {
     case "MANGA":
-      data.origin = 3
+      data.originId = 3
       break;
     case "LIGHT_NOVEL":
-      data.origin = 2
+      data.originId = 2
       break
     case "NOVEL":
-      data.origin = 6
+      data.originId = 6
       break
     case "ORIGINAL":
-      data.origin = 9
+      data.originId = 9
       break
     case "VISUAL_NOVEL":
-      data.origin = 8
+      data.originId = 8
       break
     case "VIDEO_GAME":
-      data.origin = 7
+      data.originId = 7
       break
     case "MOVIE":
-      data.origin = 5
+      data.originId = 5
       break
     case "MUSIC":
-      data.origin = 4
+      data.originId = 4
       break
     case "OTHER":
-      data.origin = 10
+      data.originId = 10
       break
     case "CARD_GAME":
-      data.origin = 1
+      data.originId = 1
       break
     case "WEB_MANGA":
-      data.origin = 11
+      data.originId = 11
       break
     case "WEB_NOVEL":
-      data.origin = 12
+      data.originId = 12
       break
     default:
-      data.origin = 0
+      data.originId = 0
   }
 
   delete data.source
