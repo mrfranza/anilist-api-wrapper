@@ -16,6 +16,7 @@ async function getAnimeOrMangaInfo(id) {
       }
       episodes
       duration
+      source
       startDate {
         year
         month
@@ -53,7 +54,10 @@ async function getAnimeOrMangaInfo(id) {
     query,
     variables,
   });
-  return response.data.data.Media;
+
+  let data = response.data.data.Media
+
+  return data;
 }
 
 const app = express();
