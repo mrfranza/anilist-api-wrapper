@@ -17,6 +17,7 @@ async function getAnimeOrMangaInfo(id) {
       episodes
       duration
       source
+      format
       status
       startDate {
         year
@@ -32,11 +33,9 @@ async function getAnimeOrMangaInfo(id) {
       type
       relations {
         edges {
+          relationType
           node {
             id
-            title {
-              romaji
-            }
           }
         }
       }
@@ -123,7 +122,69 @@ async function getAnimeOrMangaInfo(id) {
 
   delete data.source
 
-  return data;
+  switch (data['format']) {
+        case "TV":
+            data.typeId = 1
+            break;
+        case "MOVIE":
+            data.typeId = 2
+            break;
+        case "OVA":
+            data.typeId = 3
+            break;
+        case "ONA":
+            data.typeId = 4
+            break;
+        case "SPECIAL":
+            data.typeId = 5
+            break;
+        case "MUSIC":
+            data.typeId = 6
+            break;
+        default:
+            data.typeId = 0
+            break;
+    }
+
+    delete data['format']
+
+    let animeRelations = []
+
+    data.relations.edges.forEach((edge) => {
+
+        let relation
+
+        switch (edge.relationType) {
+            case "PREQUEL":
+                relation = 1
+                break;
+            case "SEQUEL":
+                relation = 2
+                break;
+            case "ALTERNATIVE":
+                relation = 4
+                break;
+            case "OTHER":
+                relation = 3
+                break;
+            case "CHARACTER":
+                relation = 5
+                break;
+            default:
+                relation = 6
+        }
+
+        animeRelations.push({
+            id: edge.node.id,
+            relationType: relation
+        })
+    })
+
+    data.animeRelations = animeRelations
+
+    delete data.relations
+
+    return data;
 }
 
 const app = express();
