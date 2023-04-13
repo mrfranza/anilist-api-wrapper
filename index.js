@@ -70,7 +70,7 @@ async function getAnimeOrMangaInfo(id) {
   data.startDate = data.startDate.year + "-" + data.startDate.month + "-" + data.startDate.day;
   data.endDate = data.endDate.year + "-" + data.endDate.month + "-" + data.endDate.day;
 
-  data.epidoseNumber = data.episodes;
+  data.episodeNumber = data.episodes;
   delete data.episodes;
   data.episodeDuration = data.duration;
   delete data.duration;
