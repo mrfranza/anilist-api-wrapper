@@ -64,6 +64,9 @@ async function getAnimeOrMangaInfo(id) {
   data.title = title;
   data.alternativeTitle = alternativeTitle;
 
+  data.storyline = data.description
+  delete data.description
+
   switch (data.status) {
     case "FINISHED":
       data.statusId = 1
