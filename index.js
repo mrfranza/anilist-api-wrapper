@@ -57,6 +57,13 @@ async function getAnimeOrMangaInfo(id) {
 
   let data = response.data.data.Media
 
+  let title = data.title.english;
+  let alternativeTitle = data.title.native + " - " + data.title.romaji;
+  delete data.title;
+
+  data.title = title;
+  data.alternativeTitle = alternativeTitle;
+
   switch (data.status) {
     case "FINISHED":
       data.statusId = 1
