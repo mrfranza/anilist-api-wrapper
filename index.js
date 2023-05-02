@@ -3,8 +3,6 @@ const express = require('express');
 const cors = require("cors");
 const helmet = require("helmet");
 
-const API_URL = 'https://graphql.anilist.co';
-
 async function getAnimeOrMangaInfo(id) {
   const query = `
   query ($id: Int) {
@@ -19,6 +17,7 @@ async function getAnimeOrMangaInfo(id) {
       source
       format
       status
+      genres
       startDate {
         year
         month
@@ -31,6 +30,9 @@ async function getAnimeOrMangaInfo(id) {
       }
       description
       type
+      tags {
+            name
+          }
       relations {
         edges {
           relationType
@@ -208,6 +210,187 @@ async function getAnimeOrMangaInfo(id) {
     data.animeRelations = animeRelations
 
     delete data.relations
+
+
+    let newGenres = []
+    for (let i = 0; i < data.genres.length; i++) {
+        let id = -1
+
+        switch (data.genres[i]) {
+            case "Action":
+                id = 38
+                break
+            case "Mystery":
+                id = 27
+                break
+            case "Fantasy":
+                id = 26
+                break
+            case "Adventure":
+                id = 25;
+                break;
+            case "Drama":
+                id = 32;
+                break;
+            case "Horror":
+                id = 29;
+                break
+            case "Sci-Fi":
+                id = 69;
+                break
+            case "Mahou Shoujo":
+                id = 41;
+                break
+            case "Thriller":
+                id = 35;
+                break
+            case "Psychological":
+                id = 28;
+                break
+            case "Mecha":
+                id = 45;
+                break
+            case "Comedy":
+                id = 37;
+                break
+            case "Romance":
+                id = 43;
+                break
+            case "Slice of Life":
+                id = 30;
+                break
+            case "Ecchi":
+                id = 47;
+                break
+            case "Sports":
+                id = 74;
+                break
+            case "Supernatural":
+                id = 34;
+                break
+            case "Music":
+                id = 94;
+                break
+        }
+
+        if (id !== -1) {
+            newGenres.push(id)
+        }
+    }
+
+    for (let genre of data.tags) {
+        let id = -1;
+
+        switch (genre.name) {
+            case "Military":
+                id = 84;
+                break;
+            case "War":
+                id = 63
+                break
+            case "Isekai":
+            case "Alternate Universe":
+                id = 74;
+                break
+            case "School":
+            case "School Club":
+                id = 32;
+                break
+            case "Demons":
+                id = 53
+                break
+            case "Superhero":
+                id = 96
+                break
+            case "Space":
+            case "Space Opera":
+                id = 87
+                break
+            case "Cars":
+                id = 90
+                break
+            case "Politics":
+                id = 59
+                break
+            case "Suicide":
+            case "Gore":
+                id = 56;
+                break
+            case "Video Games":
+                id = 85;
+                break
+            case "Vampire":
+                id = 67;
+                break
+            case "Police":
+                id = 33;
+                break
+            case "Female Harem":
+            case "Mixed Gender Harem":
+                id = 46;
+                break
+            case "Male Harem":
+                id = 80;
+                break
+            case "Seinen":
+                id = 49;
+                break
+            case "Historical":
+                id = 52;
+                break
+            case "Shoujo":
+                id = 60;
+                break
+            case "Parody":
+                id = 75;
+                break
+            case "Samurai":
+                id = 95;
+                break
+            case "Josei":
+                id = 101;
+                break
+            case "Crime":
+                id = 102;
+                break
+            case "Food":
+                id = 103;
+                break
+            case "Shounen":
+                id = 48
+                break
+            case "Yuri":
+                id = 50;
+                break
+            case "Yaoi":
+                id = 51;
+                break
+            case "Satire":
+                id = 66;
+                break
+            case "Boys' Love":
+                id = 104;
+                break
+            case "Teens' Love":
+            case "Love Triangle":
+                id = 36;
+                break
+            case "Boxing":
+                id = 64;
+                break
+            case "Martial Arts":
+                id = 68;
+                break
+        }
+        if (id !== -1 && !newGenres.includes(id)) {
+            newGenres.push(id)
+        }
+    }
+
+    delete data.tags
+    delete data.genres
+
+    data.genres = newGenres
 
     return data;
 }
