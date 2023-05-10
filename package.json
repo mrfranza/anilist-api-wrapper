@@ -4,6 +4,7 @@
   "description": "Prende in input un id/link da anilist e ne restituisce le informazioni",
   "main": "index.js",
   "scripts": {
+    "main": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
